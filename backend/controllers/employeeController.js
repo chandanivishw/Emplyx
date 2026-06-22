@@ -3,7 +3,9 @@ import Employee from "../model/Employee.js";
 const createEmployee = async (req, res) => {
     try {
         const { name, email, salary, position, contact, department } = req.body;
+        const {id} = req.params;
         const userId = req.user._id;
+        // const userId = req.body.userId; // Assuming the userId is sent in the request body. Adjust this according to your authentication logic.
         if (!name || !email || !salary || !position || !contact || !department) {
             return res.status(400).json({ message: "Please fill all fields" });
         } else {
@@ -17,7 +19,8 @@ const createEmployee = async (req, res) => {
             return res.status(201).json({ message: "Employee created successfully", employee });
         }
     } catch (error) {
-        return res.status(500).json({ message: "Internal server error" });
+         console.log(error); // 🔥 IMPORTANT
+         return res.status(500).json({message:error.message});
     }
 
 }
@@ -27,7 +30,9 @@ const getAllEmployees = async (req, res) => {
         if (req.user.role !== "admin") {
             return res.status(403).json({ message: "Access denied" });
         }
-        const allEmployees = await Employee.find().populate("userId");
+        const allEmployees = await Employee.find();
+        // const allEmployees = await Employee.find().populate("userId","role");2.
+        // const allemployees= await Employee.find().populate("userId");1.
         return res.status(200).json({ message: "All employees fetched successfully", allEmployees });
     } catch (error) {
         return res.status(500).json({ message: "Internal server error" });
@@ -54,7 +59,8 @@ const getSingleEmployee = async (req, res) => {
         return res.status(200).json({ message: "Employee fetched successfully", employee });
 
     } catch (error) {
-        return res.status(500).json({ message: "Internal server error" });
+         console.log(error); // 🔥 IMPORTANT
+         return res.status(500).json({message:error.message});
     }
 
 }
@@ -64,9 +70,9 @@ try{
     const {id} = req.params;
     const {name,email,salary,position,contact,department} = req.body;
     const updateData = {name,email,salary,position,contact,department};
-    if(!name || !email || !salary || !position || !contact || !department){
-        return res.status(400).json({message:"Please fill all fields"});
-    }
+    // if(!name || !email || !salary || !position || !contact || !department){
+    //     return res.status(400).json({message:"Please fill all fields"});
+    // }
     let employee;
     if(req.user.role === "admin"){
         employee = await Employee.findByIdAndUpdate(id,updateData,{new:true});
@@ -84,7 +90,8 @@ try{
    } 
     return res.status(200).json({message:"Employee updated successfully",employee});
 }catch(error){
-    return res.status(500).json({ message: "Internal server error" })
+    console.log(error); // 🔥 IMPORTANT
+    return res.status(500).json({message:error.message});
 }
 }
 // detele employee
@@ -106,7 +113,8 @@ try{
     }
     return res.status(200).json({message:"Employee deleted successfully",employee});
 }catch(error){
-    return res.status(500).json({message:"Internal server error"});
+     console.log(error); // 🔥 IMPORTANT
+         return res.status(500).json({message:error.message});
 }
 }
 
