@@ -3,7 +3,7 @@ import Employee from "../model/Employee.js";
 const createEmployee = async (req, res) => {
     try {
         const { name, email, salary, position, contact, department } = req.body;
-        const {id} = req.params;
+        // const {id} = req.params;
         const userId = req.user._id;
         // const userId = req.body.userId; // Assuming the userId is sent in the request body. Adjust this according to your authentication logic.
         if (!name || !email || !salary || !position || !contact || !department) {
@@ -44,7 +44,7 @@ const getSingleEmployee = async (req, res) => {
         let employee;
         const { id } = req.params;
         if (req.user.role === "admin") {
-            employee = await Employee.findById(id).populate("userId");
+            employee = await Employee.findById(id);
 
         } else {
             employee = await Employee.findOne({ userId: req.user._id }).populate("userId");

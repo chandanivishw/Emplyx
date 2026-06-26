@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
-export const authMiddleware = (req, res, next) => {
+import User from "../model/User.js";
+export const authMiddleware =async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -7,7 +8,14 @@ export const authMiddleware = (req, res, next) => {
         }
         const token = authHeader.split(" ")[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
+        // req.user = decoded;// pehle
+
+//         // ✅ ab ye karo
+// req.user =  User.findById(decoded.userId);
+const user = await User.findById(decoded.userId);
+
+req.user = user; // 🔥 pura user object
+
         next();
     } catch (error) {
         console.log(error); // 🔥 IMPORTANT
